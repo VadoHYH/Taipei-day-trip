@@ -18,7 +18,7 @@ def get_attraction(
 
         cursor = conn.cursor()
 
-        # SQL 條件
+        # SQL 查詢，使用 JOIN 一次取得所有資訊
         sql = """
             SELECT a.id, a.name, a.category, a.description, a.address, a.transport, 
                    a.mrt, a.lat, a.lng, GROUP_CONCAT(ai.image_url) AS images
@@ -31,13 +31,14 @@ def get_attraction(
             sql += " WHERE a.name LIKE %s OR a.mrt = %s"
             params.extend([f"%{keyword}%", keyword])
 
+        sql += " GROUP BY a.id, a.name, a.category, a.description, a.address, a.transport, a.mrt, a.lat, a.lng"
         sql += " LIMIT %s OFFSET %s"
         params.extend([per_page, offset])
 
         cursor.execute(sql, tuple(params))
         attractions = cursor.fetchall()
 
-        # 取得每個景點的圖片
+        # 轉換圖片格式
         for attraction in attractions:
             attraction["images"] = attraction["images"].split(",") if attraction["images"] else []
 
@@ -69,31 +70,31 @@ def get_attractions_id( id : int):
         
         cursor = conn.cursor()
 
-        #查詢指定 ID的景點
+        # 查詢指定 ID 的景點
         sql = """
             SELECT a.id, a.name, a.category, a.description, a.address, a.transport, 
                    a.mrt, a.lat, a.lng, GROUP_CONCAT(ai.image_url) AS images
             FROM attractions a
             LEFT JOIN attraction_images ai ON a.id = ai.attraction_id
             WHERE a.id = %s
-            GROUP BY a.id
+            GROUP BY a.id, a.name, a.category, a.description, a.address, a.transport, a.mrt, a.lat, a.lng
         """
         cursor.execute(sql, (id,))
         attraction = cursor.fetchone()
 
-        #如果景點不在回傳400
+        # 如果景點不存在，回傳 400
         if not attraction:
             cursor.close()
             conn.close()
             raise HTTPException(status_code=400, detail="景點編號不正確")
-        
-        #查詢該景點圖片
+
+        # 處理圖片格式
         attraction["images"] = attraction["images"].split(",") if attraction["images"] else []
 
         cursor.close()
         conn.close()
 
-        return{"data": attraction}
+        return {"data": attraction}
     
     except Exception as e:
         return {"error": True, "message": f"伺服器錯誤: {str(e)}"}
@@ -107,7 +108,7 @@ def get_mrts():
         
         cursor = conn.cursor()
 
-        # 查詢 MRT站點其對應景點數
+        # 查詢 MRT 站點其對應景點數
         sql = """
             SELECT mrt, COUNT(*) as attraction_count
             FROM attractions
