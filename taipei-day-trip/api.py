@@ -21,8 +21,9 @@ def get_attraction(
         # SQL 條件
         sql = """
             SELECT a.id, a.name, a.category, a.description, a.address, a.transport, 
-                   a.mrt, a.lat, a.lng
+                   a.mrt, a.lat, a.lng, GROUP_CONCAT(ai.image_url) AS images
             FROM attractions a
+            LEFT JOIN attraction_images ai ON a.id = ai.attraction_id
         """
         params = []
 
@@ -38,11 +39,7 @@ def get_attraction(
 
         # 取得每個景點的圖片
         for attraction in attractions:
-            cursor.execute("""
-                SELECT image_url FROM attraction_images WHERE attraction_id = %s
-            """, (attraction["id"],))
-            images = [row["image_url"] for row in cursor.fetchall()]
-            attraction["images"] = images
+            attraction["images"] = attraction["images"].split(",") if attraction["images"] else []
 
         # 查詢總數
         count_sql = "SELECT COUNT(*) AS total FROM attractions"
@@ -53,7 +50,7 @@ def get_attraction(
             cursor.execute(count_sql)
 
         total_count = cursor.fetchone()["total"]
-        next_page = page + 1 if page * per_page < total_count else None
+        next_page = page + 1 if (page + 1) * per_page < total_count else None
 
         cursor.close()
         conn.close()
@@ -74,9 +71,12 @@ def get_attractions_id( id : int):
 
         #查詢指定 ID的景點
         sql = """
-            SELECT id, name, category, description, address, transport, mrt, lat, lng
-            FROM attractions
-            WHERE id = %s
+            SELECT a.id, a.name, a.category, a.description, a.address, a.transport, 
+                   a.mrt, a.lat, a.lng, GROUP_CONCAT(ai.image_url) AS images
+            FROM attractions a
+            LEFT JOIN attraction_images ai ON a.id = ai.attraction_id
+            WHERE a.id = %s
+            GROUP BY a.id
         """
         cursor.execute(sql, (id,))
         attraction = cursor.fetchone()
@@ -88,13 +88,7 @@ def get_attractions_id( id : int):
             raise HTTPException(status_code=400, detail="景點編號不正確")
         
         #查詢該景點圖片
-        cursor.execute("""
-            SELECT image_url FROM attraction_images WHERE attraction_id = %s
-        """, (id,))
-        images = [row["image_url"] for row in cursor.fetchall()]
-
-        #將圖片加進結果
-        attraction["images"] = images
+        attraction["images"] = attraction["images"].split(",") if attraction["images"] else []
 
         cursor.close()
         conn.close()
