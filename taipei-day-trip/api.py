@@ -18,11 +18,12 @@ def get_attraction(
 
         cursor = conn.cursor()
 
-        # SQL 條件
+        # SQL 查詢，使用 JOIN 一次取得所有資訊
         sql = """
             SELECT a.id, a.name, a.category, a.description, a.address, a.transport, 
-                   a.mrt, a.lat, a.lng
+                   a.mrt, a.lat, a.lng, GROUP_CONCAT(ai.image_url) AS images
             FROM attractions a
+            LEFT JOIN attraction_images ai ON a.id = ai.attraction_id
         """
         params = []
 
@@ -30,19 +31,16 @@ def get_attraction(
             sql += " WHERE a.name LIKE %s OR a.mrt = %s"
             params.extend([f"%{keyword}%", keyword])
 
+        sql += " GROUP BY a.id, a.name, a.category, a.description, a.address, a.transport, a.mrt, a.lat, a.lng"
         sql += " LIMIT %s OFFSET %s"
         params.extend([per_page, offset])
 
         cursor.execute(sql, tuple(params))
         attractions = cursor.fetchall()
 
-        # 取得每個景點的圖片
+        # 轉換圖片格式
         for attraction in attractions:
-            cursor.execute("""
-                SELECT image_url FROM attraction_images WHERE attraction_id = %s
-            """, (attraction["id"],))
-            images = [row["image_url"] for row in cursor.fetchall()]
-            attraction["images"] = images
+            attraction["images"] = attraction["images"].split(",") if attraction["images"] else []
 
         # 查詢總數
         count_sql = "SELECT COUNT(*) AS total FROM attractions"
@@ -53,7 +51,7 @@ def get_attraction(
             cursor.execute(count_sql)
 
         total_count = cursor.fetchone()["total"]
-        next_page = page + 1 if page * per_page < total_count else None
+        next_page = page + 1 if (page + 1) * per_page < total_count else None
 
         cursor.close()
         conn.close()
@@ -72,34 +70,31 @@ def get_attractions_id( id : int):
         
         cursor = conn.cursor()
 
-        #查詢指定 ID的景點
+        # 查詢指定 ID 的景點
         sql = """
-            SELECT id, name, category, description, address, transport, mrt, lat, lng
-            FROM attractions
-            WHERE id = %s
+            SELECT a.id, a.name, a.category, a.description, a.address, a.transport, 
+                   a.mrt, a.lat, a.lng, GROUP_CONCAT(ai.image_url) AS images
+            FROM attractions a
+            LEFT JOIN attraction_images ai ON a.id = ai.attraction_id
+            WHERE a.id = %s
+            GROUP BY a.id, a.name, a.category, a.description, a.address, a.transport, a.mrt, a.lat, a.lng
         """
         cursor.execute(sql, (id,))
         attraction = cursor.fetchone()
 
-        #如果景點不在回傳400
+        # 如果景點不存在，回傳 400
         if not attraction:
             cursor.close()
             conn.close()
             raise HTTPException(status_code=400, detail="景點編號不正確")
-        
-        #查詢該景點圖片
-        cursor.execute("""
-            SELECT image_url FROM attraction_images WHERE attraction_id = %s
-        """, (id,))
-        images = [row["image_url"] for row in cursor.fetchall()]
 
-        #將圖片加進結果
-        attraction["images"] = images
+        # 處理圖片格式
+        attraction["images"] = attraction["images"].split(",") if attraction["images"] else []
 
         cursor.close()
         conn.close()
 
-        return{"data": attraction}
+        return {"data": attraction}
     
     except Exception as e:
         return {"error": True, "message": f"伺服器錯誤: {str(e)}"}
@@ -113,7 +108,7 @@ def get_mrts():
         
         cursor = conn.cursor()
 
-        # 查詢 MRT站點其對應景點數
+        # 查詢 MRT 站點其對應景點數
         sql = """
             SELECT mrt, COUNT(*) as attraction_count
             FROM attractions
