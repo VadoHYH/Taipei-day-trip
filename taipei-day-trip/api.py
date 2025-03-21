@@ -9,48 +9,47 @@ def get_attraction(
     keyword: str = Query(None, alias="keyword")
 ):
     try:
-        per_page = 12
+        per_page = 12  # 每頁 12 筆
         offset = page * per_page
 
         conn = get_db_connection()
         if conn is None:
             raise HTTPException(status_code=500, detail="無法連接到資料庫")
 
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)  # 使用 dictionary 方式返回結果
 
-        # SQL 查詢，使用 JOIN 一次取得所有資訊
+        # **修正 SQL 查詢**
         sql = """
             SELECT a.id, a.name, a.category, a.description, a.address, a.transport, 
                    a.mrt, a.lat, a.lng, GROUP_CONCAT(ai.image_url) AS images
             FROM attractions a
             LEFT JOIN attraction_images ai ON a.id = ai.attraction_id
         """
+        count_sql = "SELECT COUNT(DISTINCT a.id) AS total FROM attractions a"
         params = []
 
+        # **如果有關鍵字，加入搜尋條件**
         if keyword:
             sql += " WHERE a.name LIKE %s OR a.mrt = %s"
+            count_sql += " WHERE a.name LIKE %s OR a.mrt = %s"
             params.extend([f"%{keyword}%", keyword])
 
-        sql += " GROUP BY a.id, a.name, a.category, a.description, a.address, a.transport, a.mrt, a.lat, a.lng"
-        sql += " LIMIT %s OFFSET %s"
+        # **修正 ORDER BY，確保翻頁時資料順序正確**
+        sql += " GROUP BY a.id ORDER BY a.id LIMIT %s OFFSET %s"
         params.extend([per_page, offset])
 
         cursor.execute(sql, tuple(params))
         attractions = cursor.fetchall()
 
-        # 轉換圖片格式
+        # **轉換圖片格式**
         for attraction in attractions:
             attraction["images"] = attraction["images"].split(",") if attraction["images"] else []
 
-        # 查詢總數
-        count_sql = "SELECT COUNT(*) AS total FROM attractions"
-        if keyword:
-            count_sql += " WHERE name LIKE %s OR mrt = %s"
-            cursor.execute(count_sql, (f"%{keyword}%", keyword))
-        else:
-            cursor.execute(count_sql)
-
+        # **計算總數**
+        cursor.execute(count_sql, tuple(params[:2]))  # count_sql 只用 `keyword` 的參數
         total_count = cursor.fetchone()["total"]
+
+        # **計算 nextPage**
         next_page = page + 1 if (page + 1) * per_page < total_count else None
 
         cursor.close()
