@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // 無限滾動 
-let currentPage = 0;
+let currentPage = 1;
 let isLoading = false;
 
 window.addEventListener("scroll", () => {
