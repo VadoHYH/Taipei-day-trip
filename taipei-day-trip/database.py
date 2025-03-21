@@ -5,7 +5,7 @@ def get_db_connection():
     return pymysql.connect(
         host="localhost",
         user="root",
-        password="vadomysql",
+        password="ec2wehelpmysql",
         database="taipei_trip",
         cursorclass=pymysql.cursors.DictCursor
     )
