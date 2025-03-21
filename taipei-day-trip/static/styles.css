@@ -237,22 +237,35 @@ nav a {
 .mrt-btn {
     width: 32px;
     height: 32px;
-    border-radius: 50%; /* 圓形 */
-    border: 2px solid gray; /* 灰色外框 */
-    background-color: white; /* 中間白色 */
-    color: gray; /* 文字顏色 */
-    font-size: 16px;
-    padding: 16px;
+    border-radius: 50%; /* 確保圓形 */
+    background-color: white; /* 預設為白色 */
+    border: 2px solid lightgray; /* 預設邊框為淺灰色 */
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* 滑鼠懸停時，稍微變深 */
+/* 設定 SVG 尺寸，確保內部箭頭正常顯示 */
+.mrt-btn svg {
+    width: 32px;
+    height: 20px;
+}
+
+.mrt-btn svg path {
+    stroke: lightgray;
+    stroke-width: 2;
+}
+
+/* **確保 Hover 時變黑色** */
 .mrt-btn:hover {
-    background-color: lightgray;
-    color: black;
+    border-color: black; /* 邊框變黑 */
+}
+
+.mrt-btn:hover svg path {
+    stroke: black; /* **關鍵：讓箭頭變黑色** */
 }
 
 

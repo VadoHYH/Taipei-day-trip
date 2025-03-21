@@ -25,7 +25,7 @@ function fetchMRTStations() {
     .catch(error => console.error("無法載入 MRT 站名:", error));
 }
 
-// ✅ **建立單一景點卡片 (取代 innerHTML)**
+// 建立單一景點卡片 (取代 innerHTML)
 function createSpotCard(attraction) {
     let card = document.createElement("div");
     card.classList.add("spot-card");
@@ -67,7 +67,7 @@ function createSpotCard(attraction) {
     return card;
 }
 
-// ✅ **使用 createSpotCard 來載入景點**
+// 使用 createSpotCard 來載入景點
 function fetchAttractions(keyword = "") {
     let url = "/api/attractions";
     if (keyword) {
@@ -122,30 +122,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ✅ **無限滾動 (載入更多景點)**
+// 無限滾動 
 let currentPage = 0;
 let isLoading = false;
 
 window.addEventListener("scroll", () => {
-    if (isLoading) return;
+    if (isLoading || currentPage === null) return;  
 
     const scrollPosition = window.innerHeight + window.scrollY;
     const documentHeight = document.documentElement.offsetHeight;
 
-    if (scrollPosition >= documentHeight - 100) {
-        loadMoreAttractions();
+    if (scrollPosition >= documentHeight - 100) { 
+        loadMoreAttractions();  // 自動載入時確保關鍵字不丟失
     }
 });
 
 function loadMoreAttractions() {
-    isLoading = true;
+    if (isLoading || currentPage === null) return;  
 
+    isLoading = true; 
+
+    // 確保帶入關鍵字
+    const keyword = document.querySelector(".search-box input").value.trim();
     let url = `/api/attractions?page=${currentPage}`;
+    if (keyword) {
+        url += `&keyword=${encodeURIComponent(keyword)}`;  // 🔹 加入 keyword 參數
+    }
 
     fetch(url)
         .then(response => response.json())
         .then(data => {
             console.log("載入更多景點 API 回應:", data);
+
             if (!data || !data.data || !Array.isArray(data.data)) {
                 throw new Error("API 回應格式錯誤");
             }
@@ -153,14 +161,27 @@ function loadMoreAttractions() {
             const spotsContainer = document.getElementById("spots");
 
             data.data.forEach(attraction => {
-                let card = createSpotCard(attraction);
+                let card = document.createElement("div");
+                card.classList.add("spot-card");
+                card.innerHTML = `
+                    <div class="spot-image">
+                        <img src="${attraction.images?.[0] || 'default.jpg'}" alt="${attraction.name}">
+                        <div class="spot-name-overlay">${attraction.name}</div>
+                    </div>
+                    <div class="spot-info">
+                        <span class="spot-mrt">${attraction.mrt || "無"}</span>
+                        <span class="spot-category">${attraction.category}</span>
+                    </div>
+                `;
                 spotsContainer.appendChild(card);
             });
 
+            // 🔹 檢查是否還有下一頁
             if (data.nextPage !== null) {
                 currentPage = data.nextPage;
                 isLoading = false;
             } else {
+                currentPage = null;
                 console.log("沒有更多資料了");
             }
         })
