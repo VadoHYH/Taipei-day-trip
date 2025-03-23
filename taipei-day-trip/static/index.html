@@ -3,9 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Index</title>
+  <title>台北一日遊</title>
+  <link rel="stylesheet" href="/static/styles.css">
+
 </head>
 <body>
+  <header class="container">
+    <h1>台北一日遊</h1>
+    <nav>
+      <a href="#">預定行程</a>
+      <a href="#">登入/註冊</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <img src="/static/img/welcome_image.png" alt="hero-background">
+    <div class="container">
+      <div class="hero-content">
+        <h1>輕鬆享受台北一日悠閒</h1>
+        <h2>探索每個角落，體驗城市的深度旅遊行程</h2>
+        <div class="search-box">
+          <input type="text" placeholder="輸入景點名稱查詢">
+          <button class="search-btn">
+            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14.9536 14.9458L21 21M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mrt-filter container">
+    <button class="mrt-btn">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="mrt-scroll"></div>
+    <button class="mrt-btn">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </section>
   
+  <section class="spot-container container" id="spots">
+    
+  </section>
+  <footer>
+    COPYRIGHT © 2021台北一日遊
+  </footer>
+
+  <script src="/static/script.js"></script>
 </body>
 </html>
