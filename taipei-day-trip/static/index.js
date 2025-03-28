@@ -34,6 +34,11 @@ function createSpotCard(attraction) {
     let card = document.createElement("div");
     card.classList.add("spot-card");
 
+    //點擊後導向 attraction.html
+    card.addEventListener("click",()=>{
+        window.location.href = `/attraction/${attraction.id}`;
+    });
+
     // 圖片區塊
     let imageContainer = document.createElement("div");
     imageContainer.classList.add("spot-image");
@@ -143,3 +148,5 @@ function loadMoreAttractions() {
     let keyword = currentKeyword || document.querySelector(".search-box input").value.trim();
     fetchAttractions(keyword, currentPage, false);
 }
+
+
