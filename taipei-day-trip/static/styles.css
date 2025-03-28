@@ -512,7 +512,7 @@ footer {
 }
 
 .section-divider {
-    width: 1200px; /* 與 .container 一樣寬 */
+    max-width: 1200px; /* 與 .container 一樣寬 */
     margin: 40px auto; /* 讓它置中 */
     border: none; /* 移除預設邊框 */
     border-top: 1px solid #e8e8e8; /* 添加 1px 灰色線 */
