@@ -528,7 +528,6 @@ footer {
     flex-direction: column;
     gap: 20px;
     margin-top: 40px; /* 確保不會與上方內容重疊 */
-    margin-bottom: 120px;
 }
 
 
@@ -547,6 +546,10 @@ footer {
     font-size: 18px;
     font-weight: bold;
 
+}
+
+#transportation{
+    margin-bottom: 120px;
 }
 
 @media (max-width: 1199.99px) {
