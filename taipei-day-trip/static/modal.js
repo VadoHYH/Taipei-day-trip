@@ -21,9 +21,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const authData = await authRes.json();
 
-        if (authData.data) {
+        if (authRes.ok && authData.data) {
             updateHeaderToLogout();
         } else {
+            localStorage.removeItem("token");
             setupLoginModalLoader();
         }
     } catch (error) {
@@ -114,8 +115,8 @@ function setupLoginModal() {
 
             const data = await res.json();
 
-            if (res.ok && data.ok) {
-                localStorage.setItem("token", data.token); // 儲存 Token
+            if (res.ok && data.data && data.data.token) {
+                localStorage.setItem("token", data.data.token); // 儲存 Token
                 loginModal.remove();
                 updateHeaderToLogout();
             } else {
@@ -123,7 +124,7 @@ function setupLoginModal() {
             }
 
         } catch (err) {
-            errorEl.textContent = "⚠️ 無法連線伺服器，請稍後再試";
+            errorEl.textContent = "無法連線伺服器，請稍後再試";
         }
     });
 
@@ -167,20 +168,52 @@ function setupLoginModal() {
     });
 }
 
-// 更新 header 為登出按鈕
+// 更新 Header 為「登出系統」
 function updateHeaderToLogout() {
     const headerBtn = document.getElementById("login-trigger");
     if (!headerBtn) return;
 
-    const newBtn = headerBtn.cloneNode(true);
+    const newBtn = document.createElement("a");
     newBtn.innerText = "登出系統";
     newBtn.id = "logout-trigger";
+    newBtn.href = "#";
+
     headerBtn.replaceWith(newBtn);
 
-    newBtn.addEventListener("click", async (e) => {
+    newBtn.addEventListener("click", (e) => {
         e.preventDefault();
-
-        localStorage.removeItem("token"); // 刪除 Token
-        setupLoginModalLoader();
+        logoutUser();
     });
+}
+
+// 登出功能（直接清除 token 並更新 Header）
+function logoutUser() {
+    localStorage.removeItem("token");
+    updateHeaderToLogin(); // 改回「登入/註冊」按鈕
+}
+
+// 更新 Header 為「登入/註冊」
+function updateHeaderToLogin() {
+    const headerBtn = document.getElementById("logout-trigger");
+    if (!headerBtn) return;
+
+    const newBtn = document.createElement("a");
+    newBtn.innerText = "登入/註冊";
+    newBtn.id = "login-trigger";
+    newBtn.href = "#";
+
+    headerBtn.replaceWith(newBtn);
+
+    setupLoginModalLoader(); // 重新綁定登入按鈕
+}
+
+// 登入成功後更新 header
+async function handleLoginSuccess(token) {
+    if (!token) {
+        console.error("登入成功但未獲得 token");
+        return;
+    }
+    localStorage.setItem("token", token);
+    console.log("Token 儲存成功:", token);
+    location.reload(); // 重新整理頁面以更新狀態
 }
