@@ -102,18 +102,14 @@ function setupLoginModal() {
 
             const data = await res.json();
 
-            if (res.ok) {
-                const authRes = await fetch("/api/user/auth");
-                const authData = await authRes.json();
-            
-                if (authData.data) {
-                    loginModal.remove();
-                    updateHeaderToLogout();
-                } else {
-                    errorEl.textContent = "登入可能失敗，請重新嘗試";
-                }
+            if (res.ok && data.ok) {
+                loginModal.remove(); // 登入成功 → 關閉彈窗
+                updateHeaderToLogout(); // 更新為登出狀態
+            } else {
+                // 彈性處理後端錯誤訊息
+                errorEl.textContent = getErrorMessage(data, "登入失敗");
             }
-
+            
         } catch (err) {
             errorEl.textContent = "⚠️ 無法連線伺服器，請稍後再試";
         }

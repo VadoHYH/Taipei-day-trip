@@ -8,7 +8,7 @@ const attractionId = pathParts[pathParts.length - 1];
         return;
     }
 
-    const apiUrl = `http://13.239.58.95:8000/api/attractions/${attractionId}`;
+    const apiUrl = `http://127.0.0.1:8000/api/attractions/${attractionId}`;
     //http://13.239.58.95:8000/
     //http://127.0.0.1:8000/
     console.log("API URL:", apiUrl);  // 確認 API URL 是否正確
