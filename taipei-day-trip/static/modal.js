@@ -3,16 +3,28 @@ function getErrorMessage(data, fallbackMsg = "發生未知錯誤") {
     return data.message || data.detail || fallbackMsg;
 }
 
-// 頁面載入後檢查是否已登入
+// 檢查登入狀態
 document.addEventListener("DOMContentLoaded", async () => {
     try {
-        const authRes = await fetch("/api/user/auth");
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setupLoginModalLoader();
+            return;
+        }
+
+        const authRes = await fetch("/api/user/auth", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
         const authData = await authRes.json();
 
         if (authData.data) {
-            updateHeaderToLogout(); // 已登入 → 顯示登出按鈕
+            updateHeaderToLogout();
         } else {
-            setupLoginModalLoader(); // 未登入 → 準備登入彈窗
+            setupLoginModalLoader();
         }
     } catch (error) {
         console.error("無法確認登入狀態：", error);
@@ -103,17 +115,18 @@ function setupLoginModal() {
             const data = await res.json();
 
             if (res.ok && data.ok) {
-                loginModal.remove(); // 登入成功 → 關閉彈窗
-                updateHeaderToLogout(); // 更新為登出狀態
+                localStorage.setItem("token", data.token); // 儲存 Token
+                loginModal.remove();
+                updateHeaderToLogout();
             } else {
-                // 彈性處理後端錯誤訊息
                 errorEl.textContent = getErrorMessage(data, "登入失敗");
             }
-            
+
         } catch (err) {
             errorEl.textContent = "⚠️ 無法連線伺服器，請稍後再試";
         }
     });
+
 
     // 處理註冊送出
     signupForm.addEventListener("submit", async (e) => {
@@ -154,10 +167,9 @@ function setupLoginModal() {
     });
 }
 
-// 將 header 更新為「登出系統」
+// 更新 header 為登出按鈕
 function updateHeaderToLogout() {
     const headerBtn = document.getElementById("login-trigger");
-
     if (!headerBtn) return;
 
     const newBtn = headerBtn.cloneNode(true);
@@ -168,19 +180,7 @@ function updateHeaderToLogout() {
     newBtn.addEventListener("click", async (e) => {
         e.preventDefault();
 
-        const res = await fetch("/api/user/auth", {
-            method: "DELETE",
-        });
-
-        if (res.ok) {
-            const newLoginBtn = document.createElement("a");
-            newLoginBtn.innerText = "登入/註冊";
-            newLoginBtn.id = "login-trigger";
-
-            newBtn.replaceWith(newLoginBtn);
-            setupLoginModalLoader(); // 重新載入登入彈窗
-        } else {
-            alert("登出失敗，請稍後再試");
-        }
+        localStorage.removeItem("token"); // 刪除 Token
+        setupLoginModalLoader();
     });
 }
