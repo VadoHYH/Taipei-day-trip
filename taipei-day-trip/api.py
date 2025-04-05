@@ -140,53 +140,49 @@ def get_mrts():
 @router.post("/api/user")
 async def post_user(request: Request):
     try:
-        #先解析前端傳來的JSON
         data = await request.json()
-        name = data.get("name","").strip()
-        email = data.get("email","").strip()
-        password = data.get("password","").strip()
+        name = data.get("name", "").strip()
+        email = data.get("email", "").strip()
+        password = data.get("password", "").strip()
 
         if not name or not email or not password:
-            raise HTTPException(status_code=400, detail="請提供完整的註冊資訊")  
+            return JSONResponse(status_code=400, content={
+                "error": True,
+                "message": "請提供完整的註冊資訊"
+            })
 
-        # **檢查 Email 格式**
         email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         if not re.match(email_pattern, email):
-            raise HTTPException(status_code=400, detail="請輸入有效的 Email 格式")
+            return JSONResponse(status_code=400, content={
+                "error": True,
+                "message": "請輸入有效的 Email 格式"
+            })
 
         conn = get_db_connection()
-        if conn is None:
-            raise HTTPException(status_code=500, detail="無法連接到資料庫")
-        
         cursor = conn.cursor()
-        
-        #檢查 Email 是否已被註冊
-        cursor.execute("SELECT id FROM users WHERE email = %s",(email,))
+        cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
         existing_user = cursor.fetchone()
+
         if existing_user:
-            raise HTTPException(status_code=400,detail="該 Email 已被註冊")
-        
-        #密碼加密
+            return JSONResponse(status_code=400, content={
+                "error": True,
+                "message": "該 Email 已被註冊"
+            })
+
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-
-        #插入新使用者
-        cursor.execute(
-            "INSERT INTO users (name, email, password) VALUES (%s, %s, %s)",
-            (name, email, hashed_password),
-        )
-
+        cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
         conn.commit()
-        
+
         cursor.close()
         conn.close()
 
-        return {"ok":True}
-    
-    except HTTPException as http_error:
-        raise http_error
+        return {"ok": True}
 
     except Exception as e:
-        return {"error": True,"message":f"伺服器錯誤: {str(e)}"}
+        return JSONResponse(status_code=500, content={
+            "error": True,
+            "message": f"伺服器錯誤: {str(e)}"
+        })
 
 @router.get("/api/user/auth")
 def get_user_auth(request: Request):
@@ -230,11 +226,17 @@ async def put_user_auth(request: Request):
         password = data.get("password", "").strip()
 
         if not email or not password:
-            raise HTTPException(status_code=400, detail="請提供 Email 和密碼")
-        
+            return JSONResponse(status_code=400, content={
+                "error": True,
+                "message": "請提供 Email 和密碼"
+            })
+
         email_pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         if not re.match(email_pattern, email):
-            raise HTTPException(status_code=400, detail="請輸入有效的 Email 格式")
+            return JSONResponse(status_code=400, content={
+                "error": True,
+                "message": "請輸入有效的 Email 格式"
+            })
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -244,7 +246,10 @@ async def put_user_auth(request: Request):
         conn.close()
 
         if not user or not bcrypt.checkpw(password.encode("utf-8"), user["password"].encode("utf-8")):
-            raise HTTPException(status_code=400, detail="Email 或密碼錯誤")
+            return JSONResponse(status_code=400, content={
+                "error": True,
+                "message": "Email 或密碼錯誤"
+            })
 
         expiration = datetime.utcnow() + timedelta(days=TOKEN_EXPIRE_DAYS)
         payload = {
@@ -253,9 +258,12 @@ async def put_user_auth(request: Request):
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-        return JSONResponse(content={"data": {"token": token}}, status_code=200)
+        return JSONResponse(status_code=200, content={
+            "data": {"token": token}
+        })
 
-    except HTTPException as http_error:
-        raise http_error
     except Exception as e:
-        return JSONResponse(content={"error": True, "message": f"伺服器錯誤: {str(e)}"}, status_code=500)
+        return JSONResponse(status_code=500, content={
+            "error": True,
+            "message": f"伺服器錯誤: {str(e)}"
+        })
