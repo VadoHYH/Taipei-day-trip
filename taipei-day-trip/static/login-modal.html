@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+</head>
+<body>
+  <template id="login-modal-template">
+    <div id="login-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6L18 18M18 6L6 18" stroke="#000000" stroke-width="1.5" stroke-linecap="butt" stroke-linejoin="miter"/>
+          </svg>          
+        </span>
+        <h2 id="modal-title">登入會員帳號</h2>
+    
+        <!-- 登入表單 -->
+        <form id="login-form">
+          <label for="login-email"></label>
+          <input type="email" id="login-email" placeholder="輸入電子信箱" required >
+    
+          <label for="login-password"></label>
+          <input type="password" id="login-password" placeholder="輸入密碼" required>
+    
+          <button type="submit">登入帳號</button>
+          <div id="login-error"></div>
+          <p>還沒有帳戶？點此<span id="show-signup">註冊</span></p>
+        </form>
+  
+        <!-- 註冊表單 -->
+        <form id="signup-form" style="display: none;">
+          <label for="signup-name"></label>
+          <input type="text" id="signup-name" placeholder="輸入姓名" required>
+    
+          <label for="signup-email"></label>
+          <input type="email" id="signup-email" placeholder="輸入電子信箱" required>
+    
+          <label for="signup-password"></label>
+          <input type="password" id="signup-password" placeholder="輸入密碼" required>
+    
+          <button type="submit">註冊新帳戶</button>
+          <div id="signup-error"></div>
+          <p>已經有帳戶了？點此<span id="show-login">登入</span></p>
+        </form>
+      </div>
+    </div>
+  </template>
+</body>
+</html>

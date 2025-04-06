@@ -29,6 +29,26 @@ function fetchMRTStations() {
     .catch(error => console.error("無法載入 MRT 站名:", error));
 }
 
+//MRT滾動
+document.addEventListener("DOMContentLoaded", () => {
+    const mrtScroll = document.querySelector(".mrt-scroll");
+    const leftBtn = document.querySelector(".mrt-btn.left");
+    const rightBtn = document.querySelector(".mrt-btn.right");
+
+    const scrollAmount = 200; // 每次滾動 300px，可調整
+
+    // 右滾動
+    rightBtn.addEventListener("click", () => {
+        mrtScroll.scrollBy({ left: scrollAmount, behavior: "smooth" });
+    });
+
+    // 左滾動
+    leftBtn.addEventListener("click", () => {
+        mrtScroll.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+    });
+});
+
+
 // 建立單一景點卡片
 function createSpotCard(attraction) {
     let card = document.createElement("div");

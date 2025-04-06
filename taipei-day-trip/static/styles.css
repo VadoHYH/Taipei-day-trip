@@ -228,7 +228,7 @@ nav a {
     gap: 10px;
     overflow-x: auto;
     scrollbar-width: none;
-    -ms-overflow-style: none;
+    -ms-overflow-style: smooth;
     flex-grow: 1;
 }
 
@@ -587,4 +587,107 @@ footer {
         width: 100%; /* 確保佔滿父層 */
     }
 
+}
+
+/* login-modal.html*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: flex-start; /* 垂直方向從上對齊 */
+    padding-top: 80px; /* 留 80px 空間 */
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 25px 15px 15px; /* 頂端 25px，確保內容與邊界距離 */
+    border-radius: 10px;
+    width: 340px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+    position: relative;
+    text-align: center;
+    overflow: hidden; /* 確保 ::before 的線條不會超出去 */
+}
+
+/* 上方橫向漸層線條 */
+.modal-content::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(to right, #337788, #66AABB);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#login-form input , #signup-form input{
+    box-sizing: border-box;
+    width: 100%;
+    padding: 16.5px 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+#login-form button , #signup-form button{
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #448899;
+    color: white;
+    font-size: 19px;
+    cursor: pointer;
+}
+
+#login-form  button:hover , #signup-form button:hover{
+    background-color: #337788;
+}
+
+#login-error , #signup-error {
+    color: red;
+}
+
+#login-form  p , #signup-form  p {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+#login-form  span , #signup-form  span {
+    color: #448899;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#login-form  span:hover , #signup-form  span:hover{
+    text-decoration: underline;
 }
