@@ -2,10 +2,9 @@ from fastapi import APIRouter, Query, HTTPException,Request,Response
 from fastapi.responses import JSONResponse
 from database import get_db_connection
 from datetime import datetime, timedelta
-from jose import jwt, JWTError
 from config import SECRET_KEY, ALGORITHM, TOKEN_EXPIRE_DAYS
-import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+import jwt
 import bcrypt
 import re
 
@@ -267,3 +266,121 @@ async def put_user_auth(request: Request):
             "error": True,
             "message": f"伺服器錯誤: {str(e)}"
         })
+
+@router.get("/api/booking")
+def get_booking(request: Request):
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return JSONResponse(status_code=403, content={"error": True, "message": "為提供授權 token"})
+    
+    try:
+        payload = jwt.decode(token.split("Bearer ")[1], SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload["user_id"]
+    except (ExpiredSignatureError,InvalidTokenError):
+        return JSONResponse(status_code=403, content={"error": True, "message": "無效或過期的 token"})
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT b .attraction_id, b.date, b.time, b.price, a.name, a.address, GROUP_CONCAT(ai.image_url) AS images
+        FROM booking b
+        JOIN attractions a ON b.attraction_id = a.id
+        LEFT JOIN attraction_images ai ON a.id = ai.attraction_id
+        WHERE b.user_id = %s
+        GROUP BY b.attraction_id, b.date, b.time, b.price, a.name, a.address
+    """, (user_id,))
+    result = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not result:
+        return JSONResponse(status_code=200, content={"data": None})
+    
+    image_url = result["images"].split(",")[0] if result["images"] else None
+    
+    return JSONResponse(status_code=200, content={
+        "data":{
+            "attraction":{
+                "id": result["attraction_id"],
+                "name": result["name"],
+                "address": result["address"],
+                "image": image_url
+            },
+            "date": result["date"].strftime("%Y-%m-%d") if hasattr(result["date"], "strftime") else result["date"],
+            "time": result["time"],
+            "price": result["price"]
+        }
+    })
+
+@router.post("/api/booking")
+async def post_booking(request: Request):
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return JSONResponse(status_code=403, content={"error": True, "message": "為提供授權 token"})
+    
+    try:
+        payload = jwt.decode(token.split("Bearer ")[1], SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload["user_id"]
+    except (ExpiredSignatureError, InvalidTokenError):
+        return JSONResponse(status_code=403, content={"error": True, "message": "無效或過期的 token"})
+    
+    try:
+        data = await request.json()
+        attraction_id = data.get("attractionId")
+        date = data.get("date")
+        time = data.get("time")
+        price = data.get("price")
+
+        if not all([attraction_id, date, time, price]):
+            return JSONResponse(status_code=400, content={"error": True, "message": "預定資料不完整"})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT id FROM attractions WHERE id = %s", (attraction_id,))
+        if not cursor.fetchone():
+            return JSONResponse(status_code=400, content={"error": True, "message": "無效的景點的 ID"})
+        
+        cursor.execute("""
+            INSERT INTO booking (user_id, attraction_id, date, time, price)
+            VALUES (%s, %s, %s, %s, %s)
+            on DUPLICATE KEY UPDATE attraction_id = VALUES(attraction_id),
+                                    date = VALUES(date),
+                                    time = VALUES(time),
+                                    price = VALUES(price)
+        """, (user_id, attraction_id, date, time, price))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return JSONResponse(status_code=200, content={"ok": True})
+    
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": True, "message":  f"伺服器錯誤: {str(e)}"})
+    
+@router.delete("/api/booking")
+def delete_booking(request: Request):
+    token = request.headers.get("Authorization")
+    if not token or not token.startswith("Bearer "):
+        return JSONResponse(status_code=403, content={"error": True, "message": "未提供授權 token"})
+
+    try:
+        payload = jwt.decode(token.split("Bearer ")[1], SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload["user_id"]
+    except (ExpiredSignatureError, InvalidTokenError):
+        return JSONResponse(status_code=403, content={"error": True, "message": "無效或過期的 token"})
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM booking WHERE user_id = %s", (user_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return JSONResponse(status_code=200, content={"ok": True})
+    
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": True, "message":f"伺服器錯誤: {str(e)}"})

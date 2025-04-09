@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const token = localStorage.getItem("token");
         if (!token) {
             setupLoginModalLoader();
+            setupBookingTrigger(); // 加這行：即使沒登入也要綁定預約按鈕
             return;
         }
 
@@ -23,9 +24,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (authRes.ok && authData.data) {
             updateHeaderToLogout();
+            setupBookingTrigger(); // 登入後也綁定按鈕
         } else {
             localStorage.removeItem("token");
             setupLoginModalLoader();
+            setupBookingTrigger(); // 認證失敗時也要綁定
         }
     } catch (error) {
         console.error("無法確認登入狀態：", error);
@@ -119,6 +122,7 @@ function setupLoginModal() {
                 localStorage.setItem("token", data.data.token); // 儲存 Token
                 loginModal.remove();
                 updateHeaderToLogout();
+                setupBookingTrigger(); // ← 登入後重新綁定「預約行程」按鈕
             } else {
                 errorEl.textContent = getErrorMessage(data, "登入失敗");
             }
@@ -190,6 +194,11 @@ function updateHeaderToLogout() {
 function logoutUser() {
     localStorage.removeItem("token");
     updateHeaderToLogin(); // 改回「登入/註冊」按鈕
+
+    // 加上跳轉回首頁
+    if (window.location.pathname === "/booking") {
+        window.location.href = "/";
+    }
 }
 
 // 更新 Header 為「登入/註冊」
@@ -207,13 +216,37 @@ function updateHeaderToLogin() {
     setupLoginModalLoader(); // 重新綁定登入按鈕
 }
 
-// 登入成功後更新 header
-async function handleLoginSuccess(token) {
-    if (!token) {
-        console.error("登入成功但未獲得 token");
-        return;
-    }
-    localStorage.setItem("token", token);
-    console.log("Token 儲存成功:", token);
-    location.reload(); // 重新整理頁面以更新狀態
+function setupBookingTrigger() {
+    const bookingTrigger = document.getElementById("booking-trigger");
+    if (!bookingTrigger) return;
+
+    bookingTrigger.addEventListener("click", async (e) => {
+        e.preventDefault(); // 阻止預設跳轉動作
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            // 未登入 → 直接載入並顯示登入彈窗
+            try {
+                const response = await fetch("/static/login-modal.html");
+                const modalHTML = await response.text();
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(modalHTML, "text/html");
+                const modalTemplate = doc.getElementById("login-modal-template");
+
+                if (!modalTemplate) throw new Error("無法取得 login modal template");
+
+                const modalInstance = modalTemplate.content.cloneNode(true);
+                document.body.appendChild(modalInstance);
+                setupLoginModal();
+            } catch (error) {
+                console.error("無法載入登入視窗：", error);
+            }
+
+            return;
+        }
+
+        // 已登入 → 正常跳轉
+        window.location.href = "/booking";
+    });
 }
