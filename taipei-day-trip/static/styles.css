@@ -1,9 +1,16 @@
 /* 全域設定 */
 body {
+    height: 100%;
     font-family: 'Noto Sans TC', sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* 讓主要內容區塊置中 */
@@ -280,13 +287,12 @@ nav a {
 
 /* Footer */
 footer {
-    height: 104px;
     text-align: center;
-    align-content: center;
-    padding-top: 40px;
-    padding-bottom: 40px;
+    align-content: flex-start;
+    padding: 40px 0;
     background-color: #757575;
     color: white;
+    flex: 1;
 }
 
 @media (max-width: 1199.99px) {
@@ -690,4 +696,203 @@ footer {
 
 #login-form  span:hover , #signup-form  span:hover{
     text-decoration: underline;
+}
+
+
+/* Greeting styles */
+.bookingContainer{
+    width: 100%;  
+    max-width: 1000px;
+    margin: 0px auto;
+    padding: 0 10px; /* 左右各 10px 留白 */
+    box-sizing: border-box; /* 確保 padding 不影響 max-width */
+}
+
+.greeting {
+    margin: 40px 0 30px;
+    width: 100%;
+    text-align: left;    /* 文字靠左 */
+
+}
+.greeting p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #666666;
+}
+
+/* Tour section styles */
+.tour-section {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #E8E8E8;
+}
+
+.tour-info {
+    display: flex;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.tour-image {
+    height: 200px;
+    object-fit: cover;
+}
+
+.tour-details {
+    padding: 0 0 0 30px;
+    flex-grow: 1;
+    position: relative;
+}
+
+.tour-title {
+    font-size: 16px;
+    margin: 0 0 20px;
+    color: #448899;
+}
+
+.tour-detail-item {
+    margin: 10px 0 10px;
+    font-size: 16px;
+    color: #000000;
+}
+
+.delete-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* No tours message */
+.no-tours {
+    font-size: 16px;
+    color: #666666;
+    margin: 20px 0 20px 0;
+    max-width: 1000px;
+    text-align: left;    /* 文字靠左 */
+}
+
+/* Form sections */
+.contact-section,
+.payment-section {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #E8E8E8;
+}
+
+.section-title {
+    font-size: 19px;
+    font-weight: normal;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.form-group label {
+    width: 90px;
+    font-size: 16px;
+}
+
+.form-control {
+    width: 200px;  /* 固定寬度 */
+    padding: 10px;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-note {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* Payment actions */
+.payment-actions {
+    margin: 30px 0 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-price {
+    font-size: 16px;
+}
+
+.submit-btn {
+    background-color: #448899;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #3d7a89;
+}
+
+/* Responsive styles */
+@media (max-width: 599.99px) {
+    .container {
+        padding: 10px;
+    }
+
+    .tour-details {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .tour-info {
+        flex-direction: column;
+        position: relative;
+        padding-bottom: 60px; /* 預留空間給右下角按鈕 */
+    }
+
+    .tour-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .delete-btn {
+        position: absolute;
+        top: auto;
+        bottom: -30px;
+        right: 15px;
+        padding: 0;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .form-group label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .payment-actions {
+        flex-direction: column;
+        align-items: end;
+        gap: 20px;
+    }
+
+    .total-price {
+        width: 100%;
+        text-align: right;
+    }
 }

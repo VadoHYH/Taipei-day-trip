@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function() {
     // 修正錯誤的 URL 參數解析
     const pathParts = window.location.pathname.split("/");
-const attractionId = pathParts[pathParts.length - 1];
+    const attractionId = pathParts[pathParts.length - 1];
     
     if (!attractionId) {
         console.error("無效的景點 ID");
@@ -100,3 +100,54 @@ function renderAttraction(attraction) {
     morningRadio.checked = true;
     updatePrice(2000);
 }
+
+
+//預約行程
+document.getElementById("order-button").addEventListener("click", async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const loginTrigger = document.getElementById("login-trigger");
+      if (loginTrigger) loginTrigger.click();
+      return;
+    }
+  
+    const date = document.getElementById("date").value;
+    const time = document.querySelector("input[name='time']:checked").value;
+    const price = time === "morning" ? 2000 : 2500;
+  
+    if (!date) {
+      alert("請選擇日期！");
+      return;
+    }
+  
+    const attractionId = window.location.pathname.split("/").pop();
+  
+    const bookingData = {
+      attractionId: parseInt(attractionId),
+      date: date,
+      time: time,
+      price: price
+    };
+  
+    try {
+      const response = await fetch("/api/booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(bookingData)
+      });
+  
+      const result = await response.json();
+  
+      if (response.ok && result.ok) {
+        window.location.href = "/booking";
+      } else {
+        alert(result.message || "預約失敗，請再試一次！");
+      }
+    } catch (error) {
+      console.error("預約發生錯誤：", error);
+      alert("系統錯誤，請稍後再試");
+    }
+  });
