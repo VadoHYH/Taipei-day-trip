@@ -1,0 +1,22 @@
+/* 全域設定 */
+body {
+    height: 100%;
+    font-family: 'Noto Sans TC', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 讓主要內容區塊置中 */
+.container {
+    max-width: 1200px; /* 設定最大寬度 */
+    margin: 0 auto; /* 左右自動置中 */
+    padding: 0 20px; /* 避免內容貼邊 */
+    box-sizing: border-box;
+}
