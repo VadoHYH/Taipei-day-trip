@@ -21,6 +21,7 @@ async def attraction(request: Request):
 	return templates.TemplateResponse("attraction.html", {"request":request})
 @app.get("/booking", include_in_schema=False)
 async def booking(request: Request):
-	return FileResponse("booking.html", {"request": request})
+    return templates.TemplateResponse("booking.html", {"request": request})
+@app.get("/thankyou", include_in_schema=False)
 async def thankyou(request: Request):
-	return FileResponse("./static/thankyou.html", media_type="text/html")
+    return templates.TemplateResponse("thankyou.html", {"request": request})
