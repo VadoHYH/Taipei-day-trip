@@ -590,7 +590,7 @@ async def create_order(request: Request):
         tappay_payload = {
             "prime": prime,
             "partner_key": PARTNER_KEY,
-            "merchant_id": "tppt_Vadohyh_GP_POS_1",
+            "merchant_id": "TapPay_App_OneTimePay_Web",
             "amount": price,
             "details": "Taipei Trip",
             "cardholder": {
