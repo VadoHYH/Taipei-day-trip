@@ -2,11 +2,12 @@ from fastapi import APIRouter, Query, HTTPException,Request,Response
 from fastapi.responses import JSONResponse
 from database import get_db_connection
 from datetime import datetime, timedelta
-from config import SECRET_KEY, ALGORITHM, TOKEN_EXPIRE_DAYS
+from config import SECRET_KEY, ALGORITHM, TOKEN_EXPIRE_DAYS,PARTNER_KEY
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 import jwt
 import bcrypt
 import re
+import requests
 
 
 router = APIRouter()
@@ -384,3 +385,159 @@ def delete_booking(request: Request):
     
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": True, "message":f"伺服器錯誤: {str(e)}"})
+
+#建立訂單並付款的 API
+@router.post("/api/orders")
+async def create_order(request: Request):
+    try:
+        # 取得登入使用者資訊
+        token = request.headers.get("Authorization")
+        if not token or not token.startswith("Bearer "):
+            return JSONResponse(status_code=403, content={"error": True, "message": "未登入系統，拒絕存取"})
+
+        try:
+            payload = jwt.decode(token.split("Bearer ")[1], SECRET_KEY, algorithms=[ALGORITHM])
+            user_id = payload["user_id"]
+        except Exception:
+            return JSONResponse(status_code=403, content={"error": True, "message": "登入憑證錯誤"})
+
+        # 解析 request body
+        body = await request.json()
+        prime = body.get("prime")
+        order = body.get("order", {})
+        price = order.get("price")
+        trip = order.get("trip", {})
+        contact = order.get("contact", {})
+
+        attraction = trip.get("attraction", {})
+        attraction_id = attraction.get("id")
+        date = trip.get("date")
+        time = trip.get("time")
+        name = contact.get("name")
+        email = contact.get("email")
+        phone = contact.get("phone")
+
+        # 基本驗證
+        if not all([prime, price, attraction_id, date, time, name, email, phone]):
+            return JSONResponse(status_code=400, content={"error": True, "message": "訂單資料不完整"})
+
+        # 建立訂單編號（使用 timestamp）
+        order_number = datetime.now().strftime("%Y%m%d%H%M%S%f")[:-3]
+
+        # 建立訂單記錄（初始狀態 UNPAID）
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO orders (user_id, attraction_id, date, time, price, contact_name, contact_email, contact_phone, status, order_number)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (user_id, attraction_id, date, time, price, name, email, phone, "UNPAID", order_number))
+        conn.commit()
+        order_id = cursor.lastrowid
+
+        # 呼叫 TapPay API
+        tappay_payload = {
+            "prime": prime,
+            "partner_key": PARTNER_KEY,
+            "merchant_id": "Vadohyh_CTBC ",
+            "amount": price,
+            "details": "Taipei Trip",
+            "cardholder": {
+                "phone_number": phone,
+                "name": name,
+                "email": email
+            }
+        }
+
+        tappay_response = requests.post(
+            "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime",
+            headers={"Content-Type": "application/json", "x-api-key": PARTNER_KEY},
+            json=tappay_payload
+        )
+        tappay_result = tappay_response.json()
+
+        # 🔍 印出 TapPay 回傳內容（你要看的重點！）
+        print("TapPay 回傳結果：", tappay_result)
+
+        # 根據付款結果更新訂單狀態
+        if tappay_result.get("status") == 0:
+            cursor.execute("UPDATE orders SET status='PAID' WHERE id=%s", (order_id,))
+            conn.commit()
+            payment_status = 0
+            message = "付款成功"
+        else:
+            payment_status = tappay_result.get("status")
+            message = "付款失敗"
+
+        cursor.close()
+        conn.close()
+
+        return JSONResponse(status_code=200, content={
+            "data": {
+                "number": str(order_number),
+                "payment": {
+                    "status": payment_status,
+                    "message": message
+                }
+            }
+        })
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": True, "message": str(e)})
+
+# 取得訂單資訊的 API
+@router.get("/api/order/{order_number}")
+def get_order(order_number: str, request: Request):
+    try:
+        token = request.headers.get("Authorization")
+        if not token or not token.startswith("Bearer "):
+            return JSONResponse(status_code=403, content={"error": True, "message": "未登入系統"})
+
+        try:
+            payload = jwt.decode(token.split("Bearer ")[1], SECRET_KEY, algorithms=[ALGORITHM])
+            user_id = payload["user_id"]
+        except Exception:
+            return JSONResponse(status_code=403, content={"error": True, "message": "登入憑證錯誤"})
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT o.id, o.price, o.date, o.time, o.contact_name, o.contact_email, o.contact_phone, o.status,
+                   a.id AS attraction_id, a.name, a.address,
+                   (SELECT image_url FROM attraction_images WHERE attraction_id = a.id LIMIT 1) AS image
+            FROM orders o
+            JOIN attractions a ON o.attraction_id = a.id
+            WHERE o.order_number = %s AND o.user_id = %s
+        """, (order_number, user_id))
+
+        result = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if not result:
+            return JSONResponse(status_code=200, content={"data": None})
+
+        return JSONResponse(status_code=200, content={
+            "data": {
+                "number": str(order_number),
+                "price": result["price"],
+                "trip": {
+                    "attraction": {
+                        "id": result["attraction_id"],
+                        "name": result["name"],
+                        "address": result["address"],
+                        "image": result["image"]
+                    },
+                    "date": result["date"].strftime("%Y-%m-%d") if hasattr(result["date"], "strftime") else result["date"],
+                    "time": result["time"]
+                },
+                "contact": {
+                    "name": result["contact_name"],
+                    "email": result["contact_email"],
+                    "phone": result["contact_phone"]
+                },
+                "status": 1 if result["status"] == "PAID" else 0
+            }
+        })
+
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": True, "message": str(e)})

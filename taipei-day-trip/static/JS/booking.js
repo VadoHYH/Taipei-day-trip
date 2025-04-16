@@ -1,3 +1,5 @@
+import { setupTapPay, bindPaymentButton } from "./tappay.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("token");
   
@@ -156,3 +158,96 @@ if (logoutButton) {
     window.location.href = "/"; // 導回首頁
   });
 }
+
+let currentBooking = null; // 全域變數，儲存 /api/booking 拿到的資料
+
+document.addEventListener("DOMContentLoaded", async () => {
+  setupTapPay(159815, "app_2SUKCo0UuUWUPSFJbBqKadBYBwMcaNKASef9BTEZh2aEL5uXDa7j5L30heEA");
+
+  // 抓 booking 資料（假設你之前也這樣做）
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const res = await fetch("/api/booking", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.data) {
+        currentBooking = data.data;
+      }
+    } catch (err) {
+      console.error("取得 booking 資料錯誤：", err);
+    }
+  }
+
+  // 綁定付款按鈕
+  bindPaymentButton(async (prime) => {
+    if (!token) {
+      alert("請先登入");
+      return;
+    }
+
+    const name = document.getElementById("contact-name").value.trim();
+    const email = document.getElementById("contact-email").value.trim();
+    const phone = document.getElementById("contact-phone").value.trim();
+
+    // 檢查 contact 資料
+    if (!name || !email || !phone) {
+      alert("請填寫聯絡人資訊！");
+      return;
+    }
+
+    // 檢查 booking 是否有抓到
+    if (!currentBooking) {
+      alert("無法取得預訂資料，請重新整理頁面");
+      return;
+    }
+
+    const body = {
+      prime: prime,
+      order: {
+        price: currentBooking.price,
+        trip: {
+          attraction: {
+            id: currentBooking.attraction.id,
+            name: currentBooking.attraction.name,
+            address: currentBooking.attraction.address,
+            image: currentBooking.attraction.image
+          },
+          date: currentBooking.date,
+          time: currentBooking.time
+        },
+        contact: {
+          name: name,
+          email: email,
+          phone: phone
+        }
+      }
+    };
+
+    console.log("送出訂單：", body); // ✅ DEBUG 用
+
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const result = await res.json();
+
+      if (result.data && result.data.number) {
+        window.location.href = `/thankyou?number=${result.data.number}`;
+      } else {
+        alert(result.message || "付款失敗，請稍後再試");
+      }
+    } catch (error) {
+      console.error("付款錯誤：", error);
+      alert("伺服器錯誤");
+    }
+  });
+});

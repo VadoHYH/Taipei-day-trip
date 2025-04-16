@@ -1,0 +1,246 @@
+/* Hero 區塊（背景圖） */
+/* Hero 區塊 */
+.hero {
+    position: relative; /* 讓內部元素可以使用 absolute 定位 */
+    width: 100%;
+    height: 320px; /* 設定 hero 高度 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 確保圖片填滿區域 */
+    object-position: top ;
+    position: absolute; /* 讓圖片作為背景 */
+    top: 0;
+    left: 0;
+    z-index: -1; /* 讓圖片在最底層 */
+}
+
+.hero .container{
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+}
+/* Hero 內的文字 & 搜尋框 */
+.hero-content{
+    display: flex;
+    flex-direction: column;
+    width: 100%;  /* 讓搜尋框符合容器大小 */
+    max-width: 460px;
+}
+
+.hero h1{
+    font-size: 28px;
+    color: white;
+    padding: 0px;
+    margin: 0;
+    z-index: 1;
+    text-align: left;
+}
+
+.hero h2 {
+    font-size: 16px;
+    color: white;
+    padding: 0px;
+    z-index: 1;
+    text-align: left;
+    margin-top: 15px;
+    margin-bottom: 25px;
+}
+
+/* 搜尋框 */
+.search-box {
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+/* 調整搜尋框輸入框 */
+.search-box input {
+    flex: 1;
+    padding: 15px;
+    border-radius: 5px 0px 0px 5px;
+    font-size: 16px;
+    border: none;
+    box-sizing: border-box;
+    height: 46px;
+    min-width: 0;
+}
+
+.search-btn {
+    background: #448899;
+    border: none;
+    cursor: pointer;
+    border-radius: 0px 5px 5px 0px;
+    width: 60px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-self: center;
+    padding: 0px;
+    color: white;
+}
+
+.search-btn svg {
+    width: 30px;
+    height: 30px;
+    margin: 8px 15px 8px 15px;
+}
+
+/* 景點區塊 */
+.spot-container {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 30px;
+    padding: 15px;
+    justify-content: center;
+}
+
+/* 景點卡片 */
+.spot-card {
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+    background: white;
+    border: 1px solid #e8e8e8;
+}
+
+
+
+/* 圖片容器 */
+.spot-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; /* 維持16:9比例，可改成 4/3, 3/2 等 */
+    overflow: hidden;
+}
+
+/* 景點圖片 */
+.spot-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 黑色半透明名稱區塊 */
+.spot-name-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* 景點資訊（捷運站 + 類別） */
+.spot-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-size: 16px;
+    color: #757575;
+}
+
+/* 左側捷運站 */
+.spot-mrt {
+    font-weight: bold;
+    
+}
+
+/* 右側類別 */
+.spot-category {
+    text-align: right;
+    font-weight: bold;
+}
+
+/* MRT 捲動區 */
+.mrt-filter {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.mrt-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: smooth;
+    flex-grow: 1;
+}
+
+.mrt-scroll span {
+    padding: 8px 12px;
+    background-color: white;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mrt-scroll span:hover {
+    background: #ddd;
+}
+
+.mrt-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; /* 確保圓形 */
+    background-color: white; /* 預設為白色 */
+    border: 2px solid lightgray; /* 預設邊框為淺灰色 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 設定 SVG 尺寸，確保內部箭頭正常顯示 */
+.mrt-btn svg {
+    width: 32px;
+    height: 20px;
+}
+
+.mrt-btn svg path {
+    stroke: lightgray;
+    stroke-width: 2;
+}
+
+/* **確保 Hover 時變黑色** */
+.mrt-btn:hover {
+    border-color: black; /* 邊框變黑 */
+}
+
+.mrt-btn:hover svg path {
+    stroke: black; /* **關鍵：讓箭頭變黑色** */
+}
+
+@media (max-width: 1199.99px) {
+    .spot-container {
+        width: 90%;
+        max-width: 900px; /* 限制最大寬度，避免過寬 */
+        margin: 0 auto; /* 讓它保持置中 */
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 599.99px) {
+    .spot-container {
+        width: 90%;
+        max-width: 360px; /* 限制最大寬度 */
+        grid-template-columns: repeat(1, 1fr);
+        justify-items: center; /* 讓單個卡片置中 */
+    }
+}

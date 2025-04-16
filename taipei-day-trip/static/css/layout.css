@@ -1,0 +1,41 @@
+/* Header */
+header {
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
+}
+
+header div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header a {
+    text-decoration: none;
+}
+
+header h1 {
+    font-size: 30px;
+    font-weight: 10000;
+    color: #448899;
+    font-weight: bolder;
+}
+
+nav a {
+    font-size: 16px;
+    margin-left: 15px;
+    text-decoration: none;
+    color: #666666;
+    font-weight: bold;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    align-content: flex-start;
+    padding: 40px 0;
+    background-color: #757575;
+    color: white;
+    flex: 1;
+}
