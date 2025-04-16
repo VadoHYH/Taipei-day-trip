@@ -99,18 +99,13 @@
     font-size: 16px;
 }
 
-.form-control {
-    width: 200px;  /* 固定寬度 */
+.tpfield ,.form-control{
+    width: 180px;
+    height: 15px;  /* 固定寬度 */
     padding: 10px;
     border: 1px solid #CCCCCC;
     border-radius: 5px;
     font-size: 16px;
-}
-
-.form-note {
-    font-size: 14px;
-    color: #666;
-    margin-top: 10px;
 }
 
 /* Payment actions */
