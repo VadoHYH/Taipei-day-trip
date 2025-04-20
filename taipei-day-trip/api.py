@@ -438,7 +438,7 @@ async def create_order(request: Request):
         tappay_payload = {
             "prime": prime,
             "partner_key": PARTNER_KEY,
-            "merchant_id": "Vadohyh_CTBC ",
+            "merchant_id": "Vadohyh_CTBC",
             "amount": price,
             "details": "Taipei Trip",
             "cardholder": {
@@ -458,10 +458,13 @@ async def create_order(request: Request):
         # 🔍 印出 TapPay 回傳內容（你要看的重點！）
         print("TapPay 回傳結果：", tappay_result)
 
-        # 根據付款結果更新訂單狀態
+         # 根據付款結果更新訂單狀態
         if tappay_result.get("status") == 0:
             cursor.execute("UPDATE orders SET status='PAID' WHERE id=%s", (order_id,))
+            # ✅ 刪除該用戶的 booking 資料
+            cursor.execute("DELETE FROM booking WHERE user_id = %s", (user_id,))
             conn.commit()
+
             payment_status = 0
             message = "付款成功"
         else:
@@ -480,7 +483,7 @@ async def create_order(request: Request):
                 }
             }
         })
-
+        
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": True, "message": str(e)})
 
