@@ -1,6 +1,11 @@
 import os
 from dotenv import load_dotenv
 
+# 明確指定 .env 的位置（與啟動檔同目錄）
+from pathlib import Path
+env_path = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=env_path)
+
 load_dotenv()  # 載入環境變數
 
 SECRET_KEY = os.getenv("SECRET_KEY", "default-fallback-key")
