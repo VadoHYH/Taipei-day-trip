@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         return;
     }
 
-    const apiUrl = `http://13.239.58.95:8000/api/attractions/${attractionId}`;
+    const apiUrl = `/api/attractions/${attractionId}`;
     //http://13.239.58.95:8000/
     //http://127.0.0.1:8000/
     console.log("API URL:", apiUrl);  // 確認 API URL 是否正確
@@ -117,6 +117,15 @@ document.getElementById("order-button").addEventListener("click", async () => {
   
     if (!date) {
       alert("請選擇日期！");
+      return;
+    }
+
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      alert("請選擇今天或未來的日期！");
       return;
     }
   

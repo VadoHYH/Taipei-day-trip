@@ -183,6 +183,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 綁定付款按鈕
   bindPaymentButton(async (prime) => {
+    const submitBtn = document.querySelector(".submit-btn");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "送出中...";
+
     if (!token) {
       alert("請先登入");
       return;
@@ -192,15 +196,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email = document.getElementById("contact-email").value.trim();
     const phone = document.getElementById("contact-phone").value.trim();
 
+
     // 檢查 contact 資料
     if (!name || !email || !phone) {
       alert("請填寫聯絡人資訊！");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "確認訂單並付款";
+      return;
+    }
+
+    const phoneRegex = /^09\d{8}$/;
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+    if (!phoneRegex.test(phone)) {
+      alert("請輸入正確的手機號碼（格式：09xxxxxxxx）");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "確認訂單並付款";
+      return;
+    }
+
+
+    if (!emailRegex.test(email)) {
+      alert("請輸入正確的 Email 格式");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "確認訂單並付款";
       return;
     }
 
     // 檢查 booking 是否有抓到
     if (!currentBooking) {
       alert("無法取得預訂資料，請重新整理頁面");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "確認訂單並付款";
       return;
     }
 

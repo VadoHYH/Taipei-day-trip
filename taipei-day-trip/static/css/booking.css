@@ -135,6 +135,14 @@
     background-color: #3d7a89;
 }
 
+input.invalid {
+    border: 2px solid red;
+}
+
+input.valid {
+    border: 2px solid green;
+}
+  
 /* Responsive styles */
 @media (max-width: 599.99px) {
     .container {
