@@ -3,14 +3,13 @@ document.addEventListener("DOMContentLoaded", async function() {
     const pathParts = window.location.pathname.split("/");
     const attractionId = pathParts[pathParts.length - 1];
     
+
     if (!attractionId) {
         console.error("無效的景點 ID");
         return;
     }
 
     const apiUrl = `/api/attractions/${attractionId}`;
-    //http://13.239.58.95:8000/
-    //http://127.0.0.1:8000/
     console.log("API URL:", apiUrl);  // 確認 API URL 是否正確
 
     try {

@@ -3,6 +3,10 @@ header {
     width: 100%;
     background-color: #ffffff;
     border-bottom: 1px solid #ddd;
+    position: fixed;
+    top:0;
+    left:0;
+    z-index: 1000;
 }
 
 header div{
@@ -29,6 +33,28 @@ nav a {
     color: #666666;
     font-weight: bold;
 }
+
+#logo:hover , #booking-trigger:hover,#login-trigger:hover{
+    color: #448899;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.loading-spinner {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 5px solid #ccc;
+    border-top-color: #448899;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 
 /* Footer */
 footer {
