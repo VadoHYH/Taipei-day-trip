@@ -7,7 +7,7 @@ Username : 123@123.com
 password : 123
 
 An e-commerce travel website for exploring tourist attractions in Taipei and booking sightseeing trips.  
-Built with Flask and vanilla JavaScript as a full-stack project for the WeHelp Bootcamp.
+Built with FastAPI and vanilla JavaScript as a full-stack project for the WeHelp Bootcamp.
 
 ---
 
@@ -24,7 +24,7 @@ Built with Flask and vanilla JavaScript as a full-stack project for the WeHelp B
 
 ### Backend
 
-- Framework: Flask (Python)
+- Framework: FastAPI (Python)
 - Database: MySQL
 - Authentication: JWT (access token stored in HTTP-only cookie)
 - Payment: TapPay SDK (TWD currency)
@@ -61,12 +61,13 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 
 ## 🧱 Project Architecture
 
-![Architecture](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/architecture.png) <!-- Optional -->
+![Architecture](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Architecture.png) <!-- Optional -->
 
-- Frontend: Static files deployed on GitHub Pages
-- Backend: Flask API deployed via Render (or EC2/Railway)
-- MySQL stores attractions, bookings, members, and orders
-- TapPay processes payments via client-side SDK and server-side API
+- Frontend: Static website built with HTML/CSS/JavaScript and deployed via GitHub Pages
+- Backend: RESTful API built with FastAPI and deployed on AWS EC2
+- Database: MySQL, used to store attractions, bookings, members, and orders
+- Authentication: JWT (stored in HTTP-only cookies) for secure session management
+- Payment: Integrated with TapPay, using client-side SDK to retrieve Prime and server-side API to complete the transaction
 
 ---
 
@@ -83,13 +84,14 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 
 - VSCode
 - Chrome DevTools (for layout, JS, network debugging)
-- Thunder Client / Postman (for API testing)
 - Git + GitHub (version control & deployment)
 - GitHub Pages (frontend hosting)
+- AWS EC2 (backend deployment)
+- Uvicorn (ASGI server for FastAPI)
 
 ---
 
 ## 📝 About This Project
 
-This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design — without using modern frameworks like React.
+This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design.
 
