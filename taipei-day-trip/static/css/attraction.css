@@ -206,6 +206,10 @@
     margin-top: 10px;
 }
 
+.booking button:hover{
+    background-color: #337788;
+}
+
 .section-divider {
     max-width: 1200px; /* 與 .container 一樣寬 */
     margin: 40px auto; /* 讓它置中 */
