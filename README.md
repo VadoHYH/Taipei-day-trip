@@ -40,7 +40,7 @@ Search by keyword or MRT station, with pagination and image carousel.
 
 ---
 
-### Booking system
+### Booking
 Select date and time to reserve a tour. Bookings are available only after login.
 
 ![Booking](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Booking.gif)
