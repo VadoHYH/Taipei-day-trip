@@ -3,7 +3,7 @@
 An e-commerce travel website for exploring tourist attractions in Taipei and booking sightseeing trips.  
 Built with FastAPI and vanilla JavaScript as a full-stack project for the WeHelp Bootcamp.
 
-### Demo: [(http://13.239.58.95:8000/)]
+### Demo: [http://13.239.58.95:8000/](http://13.239.58.95:8000/)
 
 Test Account:  
 Username : 123@123.com  
