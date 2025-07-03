@@ -5,7 +5,6 @@
 Test Account
 
 Username : 123@123.com
-
 password : 123
 
 An e-commerce travel website for exploring tourist attractions in Taipei and booking sightseeing trips.  
