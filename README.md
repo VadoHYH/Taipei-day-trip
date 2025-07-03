@@ -13,7 +13,7 @@ Built with FastAPI and vanilla JavaScript as a full-stack project for the WeHelp
 
 ![demo](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/HomePage.png) <!-- Optional: Replace with your own screenshot -->
 
-## 🔧 Technique Overview
+## Technique Overview
 
 ### Frontend
 
@@ -31,35 +31,35 @@ Built with FastAPI and vanilla JavaScript as a full-stack project for the WeHelp
 
 ---
 
-## 📌 Project Highlights
+## Project Highlights
 
-### 🔍 Search for attractions
+### Search for attractions
 Search by keyword or MRT station, with pagination and image carousel.
 
 ![Search](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Search.gif)
 
 ---
 
-### 📅 Booking system
+### Booking system
 Select date and time to reserve a tour. Bookings are available only after login.
 
 ![Booking](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Booking.gif)
 
 ---
 
-### 💳 Payment with TapPay
+### Payment with TapPay
 Users can fill in card info and complete the order. Order info is saved in the backend and viewable after checkout.
 
 ![Payment](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Payment.gif)
 
 ---
 
-### 👤 User system
+### User system
 Supports sign-up, login, logout, and session management with JWT. Member-specific content like bookings and orders is protected.
 
 ---
 
-## 🧱 Project Architecture
+## Project Architecture
 
 ![Architecture](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Architecture.png) <!-- Optional -->
 
@@ -71,7 +71,7 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 
 ---
 
-## 🗃️ API & Database
+## API & Database
 
 - RESTful API design with clear separation of concerns
 - Booking & order APIs require authentication
@@ -80,7 +80,7 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 
 ---
 
-## 🧪 Development Tools
+## Development Tools
 
 - VSCode
 - Chrome DevTools (for layout, JS, network debugging)
@@ -91,7 +91,7 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 
 ---
 
-## 📝 About This Project
+## About This Project
 
 This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design.
 
