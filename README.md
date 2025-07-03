@@ -6,8 +6,9 @@ Test Account:
 Username : 123@123.com  
 password : 123
 
-An e-commerce travel website for exploring tourist attractions in Taipei and booking sightseeing trips.  
-Built with FastAPI and vanilla JavaScript as a full-stack project for the WeHelp Bootcamp.
+## About This Project
+
+This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design.
 
 ---
 
@@ -91,6 +92,8 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 
 ---
 
-## About This Project
+## Contact
 
-This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design.
+**謝曜徽 Vado Hsieh**
+* Frontend Developer (Taiwan)
+* Email: [vado.hyh@gmail.com](mailto:vado.hyh@gmail.com)
