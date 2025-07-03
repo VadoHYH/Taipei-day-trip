@@ -17,17 +17,17 @@ password : 123
 
 ### Frontend
 
-- HTML / CSS / JavaScript (Vanilla JS)
-- AJAX (Fetch API)
-- Responsive Web Design (RWD)
-- SVG Icons
+- **HTML / CSS / JavaScript (Vanilla JS)**: Core web technologies for building dynamic, highly customizable user interfaces through direct DOM manipulation.
+- **AJAX (Fetch API)**: Utilized for asynchronous communication with the backend, enabling efficient data exchange and a smooth, no-page-reload user experience.
+- **Responsive Web Design (RWD)**: Ensures an optimal viewing and interaction experience across all screen sizes and devices (desktop, tablet, mobile).
+- **SVG Icons**: Leveraged for crisp, scalable icons at any resolution, ensuring lightweight assets and easy customization via CSS.
 
 ### Backend
 
-- Framework: FastAPI (Python)
-- Database: MySQL
-- Authentication: JWT (access token stored in HTTP-only cookie)
-- Payment: TapPay SDK (TWD currency)
+- **FastAPI (Python)**: High-performance Python framework used for rapid development of robust RESTful APIs with automatic documentation.
+- **MySQL: Relational** database for persistent, structured data storage (attraction info, user records, order history), ensuring data integrity and reliability.
+- **JWT (JSON Web Token)**: Stateless authentication mechanism based on JWT, with Access Tokens securely stored in HTTP-only cookies for enhanced security and session management.
+- **TapPay SDK (TWD currency)**: Integrated for secure and convenient online credit card transactions via TapPay, supporting New Taiwan Dollar (TWD) currency.
 
 ---
 
