@@ -4,15 +4,14 @@
 
 Test Account
 
-Username : 123@123.com
-password : 123
+Username : 123@123.com\password : 123
 
 An e-commerce travel website for exploring tourist attractions in Taipei and booking sightseeing trips.  
 Built with FastAPI and vanilla JavaScript as a full-stack project for the WeHelp Bootcamp.
 
 ---
 
-![demo](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/HomePage.png) <!-- Optional: Replace with your own screenshot -->
+![demo](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/HomePage.png)
 
 ## Technique Overview
 
@@ -62,7 +61,7 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 
 ## Project Architecture
 
-![Architecture](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Architecture.png) <!-- Optional -->
+![Architecture](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/Architecture.png)
 
 - Frontend: Static website built with HTML/CSS/JavaScript and deployed via GitHub Pages
 - Backend: RESTful API built with FastAPI and deployed on AWS EC2
@@ -95,4 +94,3 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 ## About This Project
 
 This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design.
-
