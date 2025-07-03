@@ -1,14 +1,13 @@
 # Taipei Day Trip
 
-[Live Demo](http://13.239.58.95:8000/)
+An e-commerce travel website for exploring tourist attractions in Taipei and booking sightseeing trips.  
+Built with FastAPI and vanilla JavaScript as a full-stack project for the WeHelp Bootcamp.
+
+### Demo: [(http://13.239.58.95:8000/)]
 
 Test Account:  
 Username : 123@123.com  
 password : 123
-
-## About This Project
-
-This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design.
 
 ---
 
@@ -91,6 +90,10 @@ Supports sign-up, login, logout, and session management with JWT. Member-specifi
 - Uvicorn (ASGI server for FastAPI)
 
 ---
+
+## About This Project
+
+This project was built during Phase 2 of the WeHelp Bootcamp to practice full-stack development, including RESTful API design, authentication, database integration, payment processing, and responsive front-end design.
 
 ## Contact
 
