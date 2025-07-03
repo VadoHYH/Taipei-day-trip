@@ -13,7 +13,7 @@ password : 123
 
 ![demo](https://github.com/VadoHYH/Taipei-day-trip/blob/main/images/HomePage.png)
 
-## Technique Overview
+## Technologies Used
 
 ### Frontend
 
@@ -31,7 +31,7 @@ password : 123
 
 ---
 
-## Project Highlights
+## Main Features
 
 ### Search for attractions
 Search by keyword or MRT station, with pagination and image carousel.
